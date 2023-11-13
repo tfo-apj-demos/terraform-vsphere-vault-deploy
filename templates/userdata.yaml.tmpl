@@ -1,0 +1,114 @@
+#cloud-config
+write_files:
+- content: |
+    ui = true
+
+    plugin_directory = "/etc/vault.d/plugins"
+
+    storage "raft" {
+      node_id = "${hostname}"
+      path    = "/opt/vault/data"
+      retry_join {
+       auto_join = "provider=vsphere category_name=application tag_name=vault-server host=${vault_vsphere_host} user=${vault_vsphere_user} password=${vault_vsphere_password} insecure_ssl=false timeout=1m"
+      }
+    }
+
+    listener "tcp" {
+        address = "{{ GetPrivateIP }}:8200"
+        tls_cert_file = "/opt/vault/tls/tls.crt"
+        tls_key_file  = "/opt/vault/tls/tls.key"
+        tls_disable_client_certs = true
+    }
+
+    seal "transit" {
+      address = ${vault_address}
+      disable_renewal = "false"
+      key_name = "vault_unseal"
+      mount_path = "transit/"
+      namespace = "admin"
+    }
+
+    cluster_addr = "https://{{ GetPrivateIP }}:8201"
+    api_addr = "https://{{ GetPrivateIP }}:8200"
+  owner: vault:vault
+  path: /etc/vault.d/server.hcl
+  permissions: '0400'
+- content: |
+    ${vault_agent_config}
+  owner: vault:vault
+  path: /etc/vault.d/agent.hcl
+  permissions: '0400'
+  encoding: base64
+- content: |
+    ${vault_token}
+  owner: vault:vault
+  path: /etc/vault.d/.vault-token
+  permissions: '0400'
+- content: |
+    VAULT_LICENSE=${vault_license}
+    VAULT_TOKEN=${vault_token}
+  owner: vault:vault
+  path: /etc/vault.d/vault.env
+  permissions: '0400'
+- content: |
+    [Service]
+    EnvironmentFile=/etc/vault.d/vault.env
+    PassEnvironment=VAULT_LICENSE VAULT_TOKEN
+    ExecStart=
+    ExecStart=/usr/bin/vault server -config=/etc/vault.d/server.hcl
+    [Unit]
+    ConditionFileNotEmpty=/opt/vault/tls/certs
+    After=vault-agent.service
+
+  owner: vault:vault
+  path: /etc/systemd/system/vault.service.d/override.conf
+  permissions: '0644'
+
+- content: |
+    [Unit]
+    Description="HashiCorp Vault - A tool for managing secrets"
+    Documentation=https://developer.hashicorp.com/vault/docs
+    Requires=network-online.target
+    After=network-online.target
+    ConditionFileNotEmpty=/etc/vault.d/vault.hcl
+    StartLimitIntervalSec=60
+    StartLimitBurst=3
+
+    [Service]
+    Type=notify
+    EnvironmentFile=/etc/vault.d/vault.env
+    User=vault
+    Group=vault
+    ExecStart=/usr/bin/vault server -config=/etc/vault.d/vault.hcl
+    ExecReload=/bin/kill --signal HUP $MAINPID
+    KillMode=process
+    KillSignal=SIGINT
+    Restart=on-failure
+    RestartSec=5
+    TimeoutStopSec=30
+    LimitNOFILE=65536
+    LimitMEMLOCK=infinity
+
+    [Install]
+    WantedBy=multi-user.target
+  owner: root:root
+  path: /lib/systemd/system/vault-agent.service
+  permissions: '0644'
+- content: |
+    [Service]
+    EnvironmentFile=/etc/vault.d/vault.env
+    ExecStart=
+    ExecStart=/usr/bin/vault agent -config=/etc/vault.d/agent.hcl
+    [Unit]
+    ConditionFileNotEmpty=/etc/vault.d/agent.hcl
+  owner: vault:vault
+  path: /etc/systemd/system/vault-agent.service.d/override.conf
+  permissions: '0644'
+
+runcmd:
+- [ systemctl, daemon-reload ]
+- [ systemctl, enable, vault-agent.service ]
+- [ systemctl, start, --no-block, vault-agent.service ]
+- sleep 5
+- [ systemctl, enable, vault.service ]
+- [ systemctl, start, --no-block, vault.service ]

@@ -1,0 +1,29 @@
+pid_file = "/etc/vault.d/vault-agent.pid"
+
+vault {
+  address = ${vault_address}
+}
+
+auto_auth {
+  method {
+    type = "token_file"
+    namespace = "admin"
+
+    config = {
+      token_file_path = "/etc/vault.d/.vault-token"
+    }
+  }
+}
+
+template {
+  contents =<<EOH
+{{- with $private_ip := ( sockaddr "GetPrivateIP" ) }}
+{{- with pkiCert "pki/issue/gcve" "common_name=${hostname}.gcve.local" (printf "ip_sans=%s" $private_ip) }}
+{{ .Key }}{{ .Cert }}{{ .CA }}
+{{ .Cert | writeToFile "/opt/vault/tls/tls.crt" "vault" "vault" "0600" }}
+{{ .CA | writeToFile "/opt/vault/tls/tls.crt" "vault" "vault" "0600" "append" }}
+{{ .Key | writeToFile "/opt/vault/tls/tls.key" "vault" "vault" "0600" }}
+{{ end }}{{ end }}
+EOH
+  destination = "/opt/vault/tls/certs"
+}
