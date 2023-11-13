@@ -15,8 +15,6 @@ terraform {
   }
 }
 
-provider "vsphere" {}
-
 provider "nsxt" {}
 
 provider "boundary" {
