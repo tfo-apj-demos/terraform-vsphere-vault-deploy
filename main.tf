@@ -37,6 +37,7 @@ resource "nsxt_policy_lb_pool" "this" {
 
 module "vault_blue" {
   source = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
+  version = "~> 1"
 
   count = var.vault_cluster_size
 
