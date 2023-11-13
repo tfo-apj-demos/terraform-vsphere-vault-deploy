@@ -13,14 +13,9 @@ terraform {
       version = "~> 1.1"
     }
   }
-  cloud {
-    organization = "tfo-apj-demos"
-    workspaces {
-      project = "10 - gcve-foundations"
-      name    = "vsphere-vault"
-    }
-  }
 }
+
+provider "vsphere" {}
 
 provider "nsxt" {}
 
