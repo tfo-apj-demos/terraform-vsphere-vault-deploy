@@ -14,6 +14,11 @@ resource "nsxt_policy_ip_address_allocation" "this" {
   pool_path     = data.nsxt_policy_ip_pool.this.path
 }
 
+resource "nsxt_policy_ip_address_allocation" "load_balancer" {
+  display_name  = "vault-load-balancer"
+  pool_path     = data.nsxt_policy_ip_pool.this.path
+}
+
 resource "vault_token" "this" {
   count     = var.vault_cluster_size
   no_parent = true
@@ -42,6 +47,17 @@ resource "nsxt_policy_lb_pool" "this" {
   snat {
     type = "AUTOMAP"
   }
+}
+
+data "nsxt_policy_lb_app_profile" "this" {
+  display_name = "default-http-lb-app-profile"
+}
+
+resource "nsxt_policy_lb_virtual_server" "this" {
+  display_name = "vault-blue"
+  ports = ["8200"]
+  application_profile_path = data.nsxt_policy_lb_app_profile.this.path
+  ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
 }
 
 
