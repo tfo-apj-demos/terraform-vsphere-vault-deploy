@@ -32,8 +32,8 @@ resource "nsxt_policy_lb_pool" "this" {
     content {
       admin_state                = "ENABLED"
       backup_member              = false
-      display_name               = each.value.virtual_machine_name
-      ip_address                 = each.value.ip_address
+      display_name               = member.virtual_machine_name
+      ip_address                 = member.ip_address
       max_concurrent_connections = 12
       port                       = "8200"
       weight                     = 1
@@ -43,6 +43,8 @@ resource "nsxt_policy_lb_pool" "this" {
     type = "AUTOMAP"
   }
 }
+
+
 
 module "vault_blue" {
   source = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
