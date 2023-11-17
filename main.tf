@@ -58,6 +58,7 @@ resource "nsxt_policy_lb_virtual_server" "this" {
   ports = ["8200"]
   application_profile_path = data.nsxt_policy_lb_app_profile.this.path
   ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+  pool_path = nsxt_policy_lb_pool.this.path
 }
 
 
