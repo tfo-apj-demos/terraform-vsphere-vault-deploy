@@ -30,7 +30,7 @@ resource "vault_token" "this" {
 }
 
 data "nsxt_policy_lb_app_profile" "this" {
-  display_name = "default-http-lb-app-profile"
+  display_name = "default-tcp-lb-app-profile"
 }
 
 resource "nsxt_policy_lb_service" "this" {
