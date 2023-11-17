@@ -5,6 +5,15 @@ data "hcp_packer_image" "this" {
   region         = "Datacenter"
 }
 
+data "nsxt_policy_ip_pool" "this" {
+  display_name = "management-infra"
+}
+resource "nsxt_policy_ip_address_allocation" "this" {
+  count = var.vault_cluster_size
+  display_name  = "vault-blue-${count.index}"
+  pool_path     = data.nsxt_policy_ip_pool.this.path
+}
+
 resource "vault_token" "this" {
   count     = var.vault_cluster_size
   no_parent = true
@@ -47,8 +56,17 @@ module "vault_blue" {
   primary_datastore = "vsanDatastore"
   folder_path       = "management"
   networks = {
-    "seg-general" : "dhcp"
+    "seg-general" : "${nsxt_policy_ip_address_allocation.this[count_index].allocation_ip}/22"
   }
+  gateway         = "172.21.12.1"
+  dns_server_list = [
+    "10.10.0.8", 
+    "8.8.8.8"
+  ]
+  dns_suffix_list = [
+    "hashicorp.local"
+  ]
+
   template = data.hcp_packer_image.this.cloud_image_id
   tags = {
     "application" = "vault-server"
@@ -70,6 +88,12 @@ module "vault_blue" {
 
   metadata = templatefile("${path.module}/templates/metadata.yaml.tmpl", {
     hostname = "vault-blue-${count.index + 1}"
+    ip_address = nsxt_policy_ip_address_allocation.this[count_index].allocation_ip
+    netmask = 22
+    nameservers = [ 
+      "10.10.0.8", 
+      "8.8.8.8"
+    ]
   })
 }
 

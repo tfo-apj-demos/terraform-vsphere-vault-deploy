@@ -4,5 +4,11 @@ network:
   version: 2
   ethernets:
     ens192:
-      dhcp4: true
-     
+      %{ if ip_address == false }dhcp4: true
+      %{ else }dhcp4: false
+      addresses:
+        - ${ip_address}/${netmask}
+      gateway4: ${gateway}
+      nameservers:
+        addresses: ${nameservers}
+      %{ endif }
