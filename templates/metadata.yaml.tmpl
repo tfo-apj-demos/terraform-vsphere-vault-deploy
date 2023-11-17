@@ -10,9 +10,7 @@ network:
         - ${ip_address}/${netmask}
       gateway4: ${gateway}
       nameservers:
-        addresses: %{ for nameserver in nameservers ~}
-        - ${nameserver}
-        %{ endfor }
+        addresses: [ for nameserver in nameservers: ${nameserver} ]
       %{ endif }
 
       
