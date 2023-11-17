@@ -29,6 +29,18 @@ resource "vault_token" "this" {
   ]
 }
 
+data "nsxt_policy_lb_app_profile" "this" {
+  display_name = "default-http-lb-app-profile"
+}
+
+resource "nsxt_policy_lb_service" "this" {
+  display_name      = "vault"
+  # connectivity_path = data.nsxt_policy_tier1_gateway.test.path
+  size              = "SMALL"
+  error_log_level   = "ERROR"
+  # depends_on        = [nsxt_policy_tier1_gateway_interface.tier1_gateway_interface]
+}
+
 resource "nsxt_policy_lb_pool" "this" {
   display_name       = "vault"
   min_active_members = 1
@@ -49,19 +61,14 @@ resource "nsxt_policy_lb_pool" "this" {
   }
 }
 
-data "nsxt_policy_lb_app_profile" "this" {
-  display_name = "default-http-lb-app-profile"
-}
-
 resource "nsxt_policy_lb_virtual_server" "this" {
-  display_name = "vault-blue"
+  display_name = "vault"
   ports = ["8200"]
   application_profile_path = data.nsxt_policy_lb_app_profile.this.path
   ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
   pool_path = nsxt_policy_lb_pool.this.path
+  service_path = nsxt_policy_lb_service.this.path
 }
-
-
 
 module "vault_blue" {
   source = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
