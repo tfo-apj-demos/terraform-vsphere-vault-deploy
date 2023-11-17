@@ -11,7 +11,7 @@ network:
       gateway4: ${gateway}
       nameservers:
         addresses: %{ for nameserver in nameservers ~}
-          - ${nameserver}
+        - ${nameserver}
         %{ endfor }
       %{ endif }
 
