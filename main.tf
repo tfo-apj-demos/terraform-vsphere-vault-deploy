@@ -24,25 +24,25 @@ resource "vault_token" "this" {
   ]
 }
 
-# resource "nsxt_policy_lb_pool" "this" {
-#   display_name       = "vault"
-#   min_active_members = 1
-#   dynamic "member" {
-#     for_each = module.vault_blue
-#     content {
-#       admin_state                = "ENABLED"
-#       backup_member              = false
-#       display_name               = each.value.virtual_machine_name
-#       ip_address                 = each.value.ip_address
-#       max_concurrent_connections = 12
-#       port                       = "8200"
-#       weight                     = 1
-#     }
-#   }
-#   snat {
-#     type = "AUTOMAP"
-#   }
-# }
+resource "nsxt_policy_lb_pool" "this" {
+  display_name       = "vault"
+  min_active_members = 1
+  dynamic "member" {
+    for_each = module.vault_blue
+    content {
+      admin_state                = "ENABLED"
+      backup_member              = false
+      display_name               = each.value.virtual_machine_name
+      ip_address                 = each.value.ip_address
+      max_concurrent_connections = 12
+      port                       = "8200"
+      weight                     = 1
+    }
+  }
+  snat {
+    type = "AUTOMAP"
+  }
+}
 
 module "vault_blue" {
   source = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
