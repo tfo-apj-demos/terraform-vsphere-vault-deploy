@@ -109,6 +109,7 @@ module "vault_blue" {
       hostname      = "vault-blue-${count.index + 1}"
       vault_address = var.vault_address
     }))
+    ip_address = nsxt_policy_ip_address_allocation.this["count.index"].allocation_ip
   })
 }
 
