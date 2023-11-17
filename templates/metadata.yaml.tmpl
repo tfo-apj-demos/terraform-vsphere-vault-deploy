@@ -8,7 +8,9 @@ network:
       %{ else }dhcp4: false
       addresses:
         - ${ip_address}/${netmask}
-      gateway4: ${gateway}
+      routes:
+        - to: default
+          via: ${gateway}
       nameservers:
         addresses: [%{ for nameserver in nameservers } ${nameserver},%{ endfor } ] 
       %{ endif }
