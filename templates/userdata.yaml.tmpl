@@ -23,7 +23,7 @@ write_files:
     }
 
     seal "transit" {
-      address = ${vault_address}
+      address = "${vault_address}"
       disable_renewal = "false"
       key_name = "vault_unseal"
       mount_path = "transit/"
