@@ -58,6 +58,13 @@ module "vault_blue" {
   networks = {
     "seg-general" : "${nsxt_policy_ip_address_allocation.this[count.index].allocation_ip}/22"
   }
+  dns_server_list = [ 
+      "10.10.0.8", 
+      "8.8.8.8"
+    ]
+  gateway = "172.21.12.1"
+  dns_suffix_list = ["hashicorp.local"]
+
 
   template = data.hcp_packer_image.this.cloud_image_id
   tags = {
