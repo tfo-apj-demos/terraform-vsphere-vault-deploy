@@ -84,17 +84,6 @@ module "vault_blue" {
       vault_address = var.vault_address
     }))
   })
-
-  metadata = templatefile("${path.module}/templates/metadata.yaml.tmpl", {
-    hostname = "vault-blue-${count.index + 1}"
-    ip_address = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
-    netmask = 22
-    nameservers = [ 
-      "10.10.0.8", 
-      "8.8.8.8"
-    ]
-    gateway = "172.21.12.1"
-  })
 }
 
 ### Boundary
