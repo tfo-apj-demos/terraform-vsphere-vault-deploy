@@ -114,6 +114,7 @@ module "vault_blue" {
       vault_address = var.vault_address
     }))
     ip_address = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
+    load_balancer_ip = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
   })
 }
 
