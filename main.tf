@@ -149,6 +149,13 @@ resource "boundary_target" "ssh_this" {
   ingress_worker_filter = "\"vmware\" in \"/tags/platform\""
 }
 
+resource "dns_a_record_set" "this" {
+  name = "vault.hashicorp.local"
+  addresses = [
+    "${nsxt_policy_ip_address_allocation.load_balancer.allocation_ip}"
+  ]
+  zone = "hashicorp.local"
+}
 
 
 # locals {

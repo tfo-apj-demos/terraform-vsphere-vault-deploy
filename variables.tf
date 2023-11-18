@@ -61,3 +61,7 @@ variable "tag_key" {
 variable "operator" {
   default = "in"
 }
+
+variable "dns_zone_signing_key" {
+  type = string
+}
