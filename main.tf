@@ -9,14 +9,14 @@ data "nsxt_policy_ip_pool" "this" {
   display_name = "10 - gcve-foundations"
 }
 resource "nsxt_policy_ip_address_allocation" "this" {
-  count = var.vault_cluster_size
-  display_name  = "vault-blue-${count.index}"
-  pool_path     = data.nsxt_policy_ip_pool.this.path
+  count        = var.vault_cluster_size
+  display_name = "vault-blue-${count.index}"
+  pool_path    = data.nsxt_policy_ip_pool.this.path
 }
 
 resource "nsxt_policy_ip_address_allocation" "load_balancer" {
-  display_name  = "vault-load-balancer"
-  pool_path     = data.nsxt_policy_ip_pool.this.path
+  display_name = "vault-load-balancer"
+  pool_path    = data.nsxt_policy_ip_pool.this.path
 }
 
 resource "vault_token" "this" {
@@ -29,16 +29,20 @@ resource "vault_token" "this" {
   ]
 }
 
+data "nsxt_policy_tier1_gateway" "this" {
+  display_name = "Tier1"
+}
+
 data "nsxt_policy_lb_app_profile" "this" {
   display_name = "default-tcp-lb-app-profile"
 }
 
 resource "nsxt_policy_lb_service" "this" {
   display_name      = "vault"
-  # connectivity_path = data.nsxt_policy_tier1_gateway.test.path
+  connectivity_path = data.nsxt_policy_tier1_gateway.this.path
   size              = "SMALL"
   error_log_level   = "ERROR"
-  # depends_on        = [nsxt_policy_tier1_gateway_interface.tier1_gateway_interface]
+  enabled           = true
 }
 
 resource "nsxt_policy_lb_pool" "this" {
@@ -62,16 +66,16 @@ resource "nsxt_policy_lb_pool" "this" {
 }
 
 resource "nsxt_policy_lb_virtual_server" "this" {
-  display_name = "vault"
-  ports = ["8200"]
+  display_name             = "vault"
+  ports                    = ["8200"]
   application_profile_path = data.nsxt_policy_lb_app_profile.this.path
-  ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
-  pool_path = nsxt_policy_lb_pool.this.path
-  service_path = nsxt_policy_lb_service.this.path
+  ip_address               = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+  pool_path                = nsxt_policy_lb_pool.this.path
+  service_path             = nsxt_policy_lb_service.this.path
 }
 
 module "vault_blue" {
-  source = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
+  source  = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
   version = "~> 1.3"
 
   count = var.vault_cluster_size
@@ -84,11 +88,11 @@ module "vault_blue" {
   networks = {
     "seg-general" : "${nsxt_policy_ip_address_allocation.this[count.index].allocation_ip}/22"
   }
-  dns_server_list = [ 
-      "10.10.0.8", 
-      "8.8.8.8"
-    ]
-  gateway = "172.21.12.1"
+  dns_server_list = [
+    "10.10.0.8",
+    "8.8.8.8"
+  ]
+  gateway         = "172.21.12.1"
   dns_suffix_list = ["hashicorp.local"]
 
 
@@ -105,7 +109,7 @@ module "vault_blue" {
     vault_vsphere_host     = var.vault_vsphere_host
     vault_vsphere_user     = var.vault_vsphere_user
     vault_vsphere_password = var.vault_vsphere_password
-    vault_agent_config     = base64encode(templatefile("${path.module}/templates/vault_agent.conf.tmpl", {
+    vault_agent_config = base64encode(templatefile("${path.module}/templates/vault_agent.conf.tmpl", {
       hostname      = "vault-blue-${count.index + 1}"
       vault_address = var.vault_address
     }))
