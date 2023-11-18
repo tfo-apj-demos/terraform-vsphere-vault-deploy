@@ -112,9 +112,9 @@ module "vault_blue" {
     vault_agent_config = base64encode(templatefile("${path.module}/templates/vault_agent.conf.tmpl", {
       hostname      = "vault-blue-${count.index + 1}"
       vault_address = var.vault_address
+      load_balancer_ip = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
     }))
     ip_address = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
-    load_balancer_ip = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
   })
 }
 
