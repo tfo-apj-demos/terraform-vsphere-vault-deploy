@@ -34,9 +34,11 @@ provider "boundary" {
 
 provider "dns" {
   update {
-    server        = "172.21.15.150"
-    key_name      = "hashicorp.local."
-    key_algorithm = "RsaSha256"
-    key_secret    = var.dns_zone_signing_key
-  }
+    server = var.dns_server # Using the hostname is important in order for an SPN to match
+    gssapi {
+      realm    = var.dns_realm
+      username = var.dns_username
+      password = var.dns_password
+    }
+  }       
 }
