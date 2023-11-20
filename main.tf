@@ -150,11 +150,11 @@ resource "boundary_target" "ssh_this" {
 }
 
 resource "dns_a_record_set" "this" {
-  name = "vault.hashicorp.local"
+  name = "vault"
   addresses = [
     "${nsxt_policy_ip_address_allocation.load_balancer.allocation_ip}"
   ]
-  zone = "HASHICORP.LOCAL."
+  zone = "hashicorp.local."
 }
 
 
