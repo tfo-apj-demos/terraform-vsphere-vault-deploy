@@ -149,10 +149,19 @@ resource "boundary_target" "ssh_this" {
   ingress_worker_filter = "\"vmware\" in \"/tags/platform\""
 }
 
-resource "dns_a_record_set" "this" {
+resource "dns_a_record_set" "lb" {
   name = "vault"
   addresses = [
-    "${nsxt_policy_ip_address_allocation.load_balancer.allocation_ip}"
+    nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+  ]
+  zone = "hashicorp.local."
+}
+
+resource "dns_a_record_set" "this" {
+  for_each = module.vault_blue
+  name = each.value.virtual_machine_name
+  addresses = [
+    each.value.ip_address
   ]
   zone = "hashicorp.local."
 }
