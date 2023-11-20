@@ -158,10 +158,10 @@ resource "dns_a_record_set" "lb" {
 }
 
 resource "dns_a_record_set" "this" {
-  for_each = module.vault_blue
-  name = each.value.virtual_machine_name
+  count = var.vault_cluster_size
+  name = module.vault_blue[count.index].virtual_machine_name
   addresses = [
-    each.value.ip_address
+    module.vault_blue[count.index].ip_address
   ]
   zone = "hashicorp.local."
 }
