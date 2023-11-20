@@ -154,7 +154,7 @@ resource "dns_a_record_set" "this" {
   addresses = [
     "${nsxt_policy_ip_address_allocation.load_balancer.allocation_ip}"
   ]
-  zone = "hashicorp.local."
+  zone = "HASHICORP.LOCAL."
 }
 
 
