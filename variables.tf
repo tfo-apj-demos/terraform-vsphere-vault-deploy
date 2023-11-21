@@ -81,3 +81,7 @@ variable "dns_realm" {
 variable "dns_server" {
   type = string
 }
+
+variable "load_balancer_dns_name" {
+  type = string
+}

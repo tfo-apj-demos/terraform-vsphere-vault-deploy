@@ -113,6 +113,7 @@ module "vault_blue" {
       hostname      = "vault-blue-${count.index + 1}"
       vault_address = var.vault_address
       load_balancer_ip = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+      load_balancer_dns_name = var.load_balancer_dns_name
     }))
     ip_address = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
   })
@@ -150,7 +151,7 @@ resource "boundary_target" "ssh_this" {
 }
 
 resource "dns_a_record_set" "lb" {
-  name = "vault"
+  name = var.load_balancer_dns_name
   addresses = [
     nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
   ]
