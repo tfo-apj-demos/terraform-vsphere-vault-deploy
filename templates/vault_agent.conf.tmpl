@@ -21,11 +21,13 @@ template {
 {{- with pkiCert "pki/issue/gcve" "common_name=${hostname}.hashicorp.local" "alt_names=${load_balancer_dns_name}.hashicorp.local" (printf "ip_sans=%s,%s" $private_ip "${load_balancer_ip}") }}
 {{ .Key | writeToFile "/opt/vault/tls/tls.key" "vault" "vault" "0600" }}
 {{ .Cert | writeToFile "/opt/vault/tls/tls.crt" "vault" "vault" "0600" }}
-{{ end }}
-{{ - with secret "pki/cert/ca_chain" }}
+{{- end }}
+{{- with secret "pki/cert/ca_chain" }}
 {{ .Data.ca_chain | writeToFile "/opt/vault/tls/tls.crt" "vault" "vault" "0600" "append" }}
 {{ end }}{{ end }}
 EOH
   destination = "/opt/vault/tls/certs"
-
+  exec = {
+    command = ["pkill", "-SIGHUP", "vault"]
+  }
 }
