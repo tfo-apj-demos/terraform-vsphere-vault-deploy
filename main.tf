@@ -44,7 +44,7 @@ module "load_balancer" {
   ]
   load_balancer_ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
   name = "vault"
-  type = "TCP"
+  lb_app_profile_type = "TCP"
 }
 # data "nsxt_policy_lb_app_profile" "this" {
 #   display_name = "default-tcp-lb-app-profile"
