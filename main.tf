@@ -33,46 +33,59 @@ data "nsxt_policy_tier1_gateway" "this" {
   display_name = "Tier1"
 }
 
-data "nsxt_policy_lb_app_profile" "this" {
-  display_name = "default-tcp-lb-app-profile"
-}
 
-resource "nsxt_policy_lb_service" "this" {
-  display_name      = "vault"
-  connectivity_path = data.nsxt_policy_tier1_gateway.this.path
-  size              = "SMALL"
-  error_log_level   = "ERROR"
-  enabled           = true
-}
+module "load_balancer" {
+  source  = "app.terraform.io/tfo-apj-demos/load-balancer/nsxt"
+  version = "0.0.1"
 
-resource "nsxt_policy_lb_pool" "this" {
-  display_name       = "vault"
-  min_active_members = 1
-  dynamic "member" {
-    for_each = module.vault_blue
-    content {
-      admin_state                = "ENABLED"
-      backup_member              = false
-      display_name               = member.value.virtual_machine_name
-      ip_address                 = member.value.ip_address
-      max_concurrent_connections = 12
-      port                       = "8200"
-      weight                     = 1
-    }
-  }
-  snat {
-    type = "AUTOMAP"
-  }
+  hosts = [ for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address): { "hostname" = hostname, "address" = address } ]
+  ports = [
+    "8200"
+  ]
+  load_balancer_ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+  name = "vault"
+  type = "TCP"
 }
+# data "nsxt_policy_lb_app_profile" "this" {
+#   display_name = "default-tcp-lb-app-profile"
+# }
 
-resource "nsxt_policy_lb_virtual_server" "this" {
-  display_name             = "vault"
-  ports                    = ["8200"]
-  application_profile_path = data.nsxt_policy_lb_app_profile.this.path
-  ip_address               = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
-  pool_path                = nsxt_policy_lb_pool.this.path
-  service_path             = nsxt_policy_lb_service.this.path
-}
+# resource "nsxt_policy_lb_service" "this" {
+#   display_name      = "vault"
+#   connectivity_path = data.nsxt_policy_tier1_gateway.this.path
+#   size              = "SMALL"
+#   error_log_level   = "ERROR"
+#   enabled           = true
+# }
+
+# resource "nsxt_policy_lb_pool" "this" {
+#   display_name       = "vault"
+#   min_active_members = 1
+#   dynamic "member" {
+#     for_each = module.vault_blue
+#     content {
+#       admin_state                = "ENABLED"
+#       backup_member              = false
+#       display_name               = member.value.virtual_machine_name
+#       ip_address                 = member.value.ip_address
+#       max_concurrent_connections = 12
+#       port                       = "8200"
+#       weight                     = 1
+#     }
+#   }
+#   snat {
+#     type = "AUTOMAP"
+#   }
+# }
+
+# resource "nsxt_policy_lb_virtual_server" "this" {
+#   display_name             = "vault"
+#   ports                    = ["8200"]
+#   application_profile_path = data.nsxt_policy_lb_app_profile.this.path
+#   ip_address               = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+#   pool_path                = nsxt_policy_lb_pool.this.path
+#   service_path             = nsxt_policy_lb_service.this.path
+# }
 
 module "vault_blue" {
   source  = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
