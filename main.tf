@@ -133,6 +133,7 @@ module "boundary_target" {
       port = "22"
     }
   ]
+  project_name = "grantorchard"
   host_catalog_id = "hcst_7B2FWBRqb0"
   hostname_prefix = "vault-blue"
   injected_credential_library_ids = ["clvsclt_gmitu8xc09"]
