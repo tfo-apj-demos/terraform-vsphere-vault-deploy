@@ -121,34 +121,21 @@ module "vault_blue" {
 }
 
 ### Boundary
-resource "boundary_host_static" "this" {
-  count           = length(module.vault_blue)
-  type            = "static"
-  name            = module.vault_blue[count.index].virtual_machine_name
-  host_catalog_id = var.host_catalog_id
-  address         = module.vault_blue[count.index].ip_address
-}
+module "boundary_target" {
+  source  = "app.terraform.io/tfo-apj-demos/target/boundary"
+  version = "~> 0.0"
 
-resource "boundary_host_set_static" "this" {
-  type            = "static"
-  name            = "vault_servers"
-  host_catalog_id = var.host_catalog_id
-
-  host_ids = boundary_host_static.this.*.id
-}
-
-resource "boundary_target" "ssh_this" {
-  name         = "ssh_vault_blue"
-  type         = "ssh"
-  default_port = "22"
-  scope_id     = var.scope_id
-  host_source_ids = [
-    boundary_host_set_static.this.id
+  hosts = [ for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address): { "hostname" = hostname, "address" = address } ]
+  services = [
+    { 
+      name = "ssh",
+      type = "tcp",
+      port = "22"
+    }
   ]
-  injected_application_credential_source_ids = [
-    var.credential_library_id
-  ]
-  ingress_worker_filter = "\"vmware\" in \"/tags/platform\""
+  host_catalog_id = "hcst_7B2FWBRqb0"
+  hostname_prefix = "vault-blue"
+  injected_credential_library_ids = ["clvsclt_gmitu8xc09"]
 }
 
 resource "dns_a_record_set" "lb" {
