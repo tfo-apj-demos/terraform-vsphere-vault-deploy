@@ -112,7 +112,7 @@ module "boundary_target" {
   injected_credential_library_ids = ["clvsclt_gmitu8xc09"]
 }
 
-resource "dns_a_record_set" "lb" {
+/*resource "dns_a_record_set" "lb" {
   name = var.load_balancer_dns_name
   addresses = [
     nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
@@ -127,8 +127,23 @@ resource "dns_a_record_set" "this" {
     module.vault_blue[count.index].ip_address
   ]
   zone = "hashicorp.local."
-}
+}*/
 
+module "domain-name-system-management" {
+  source  = "app.terraform.io/tfo-apj-demos/domain-name-system-management/dns"
+  version = "~> 1.0"
+
+  a_records = concat(
+    [{
+      name      = var.load_balancer_dns_name
+      addresses = [nsxt_policy_ip_address_allocation.load_balancer.allocation_ip]
+    }],
+    [for i in range(var.vault_cluster_size): {
+      name      = module.vault_blue[i].virtual_machine_name
+      addresses = [module.vault_blue[i].ip_address]
+    }]
+  )
+}
 
 # locals {
 #   filter = var.operator == "contains" ?   : "${jsonencode(var.tag_value)} ${var.operator} ${jsonencode(var.tag_key)}"

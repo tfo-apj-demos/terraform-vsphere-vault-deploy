@@ -62,10 +62,6 @@ variable "operator" {
   default = "in"
 }
 
-variable "dns_zone_signing_key" {
-  type = string
-}
-
 variable "dns_username" {
   type = string
 }
