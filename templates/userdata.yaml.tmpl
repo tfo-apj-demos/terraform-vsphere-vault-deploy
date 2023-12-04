@@ -79,6 +79,7 @@ write_files:
     EnvironmentFile=/etc/vault.d/vault.env
     User=vault
     Group=vault
+    AmbientCapabilities=CAP_KILL
     ExecStart=/usr/bin/vault server -config=/etc/vault.d/vault.hcl
     ExecReload=/bin/kill --signal HUP $MAINPID
     KillMode=process
