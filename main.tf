@@ -102,7 +102,7 @@ module "boundary_target" {
   services = [
     { 
       name = "ssh",
-      type = "tcp",
+      type = "ssh",
       port = "22"
     }
   ]
