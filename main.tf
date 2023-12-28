@@ -1,3 +1,4 @@
+# --- Get latest Vault image value from HCP Packer
 data "hcp_packer_image" "this" {
   bucket_name    = "vault-ubuntu-2204"
   channel        = "latest"
@@ -5,6 +6,7 @@ data "hcp_packer_image" "this" {
   region         = "Datacenter"
 }
 
+# --- Retrieve IPs for use by the load balancer and Vault virtual machines
 data "nsxt_policy_ip_pool" "this" {
   display_name = "10 - gcve-foundations"
 }
@@ -19,6 +21,7 @@ resource "nsxt_policy_ip_address_allocation" "load_balancer" {
   pool_path    = data.nsxt_policy_ip_pool.this.path
 }
 
+# --- Generate a Vault token for the agent to bootstrap and retrieve certificates for the Vault server
 resource "vault_token" "this" {
   count     = var.vault_cluster_size
   no_parent = true
@@ -29,11 +32,7 @@ resource "vault_token" "this" {
   ]
 }
 
-data "nsxt_policy_tier1_gateway" "this" {
-  display_name = "Tier1"
-}
-
-
+# --- Deploy Load Balancer
 module "load_balancer" {
   source  = "app.terraform.io/tfo-apj-demos/load-balancer/nsxt"
   version = "0.0.1"
@@ -47,6 +46,7 @@ module "load_balancer" {
   lb_app_profile_type = "TCP"
 }
 
+# --- Deploy a cluster of Vault nodes
 module "vault_blue" {
   source  = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
   version = "~> 1.3"
@@ -62,8 +62,8 @@ module "vault_blue" {
     "seg-general" : "${nsxt_policy_ip_address_allocation.this[count.index].allocation_ip}/22"
   }
   dns_server_list = [
-    "10.10.0.8",
-    "8.8.8.8"
+    "172.21.15.150",
+    "10.10.0.8"
   ]
   gateway         = "172.21.12.1"
   dns_suffix_list = ["hashicorp.local"]
@@ -93,7 +93,7 @@ module "vault_blue" {
   })
 }
 
-# --- Boundary
+# --- Create Boundary targets for the Vault nodes
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "~> 0.0"
@@ -112,23 +112,7 @@ module "boundary_target" {
   injected_credential_library_ids = ["clvsclt_gmitu8xc09"]
 }
 
-/*resource "dns_a_record_set" "lb" {
-  name = var.load_balancer_dns_name
-  addresses = [
-    nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
-  ]
-  zone = "hashicorp.local."
-}
-
-resource "dns_a_record_set" "this" {
-  count = var.vault_cluster_size
-  name = module.vault_blue[count.index].virtual_machine_name
-  addresses = [
-    module.vault_blue[count.index].ip_address
-  ]
-  zone = "hashicorp.local."
-}*/
-
+# --- Add Vault nodes and LB to DNS
 module "domain-name-system-management" {
   source  = "app.terraform.io/tfo-apj-demos/domain-name-system-management/dns"
   version = "~> 1.0"
@@ -148,33 +132,3 @@ module "domain-name-system-management" {
 # locals {
 #   filter = var.operator == "contains" ?   : "${jsonencode(var.tag_value)} ${var.operator} ${jsonencode(var.tag_key)}"
 # }
-
-# module "remote_access" {
-#   source = "./modules/remote_access"
-
-#   host_catalog_id = ""
-#   credential_library_id = ""
-#   scope_id = ""
-#   targets = [
-#     {
-#       type = "ssh"
-#       port = 22
-#     }
-#     {
-
-#     }
-#   ]
-# }
-
-# variable "remote_access" {
-#   type = list(object({
-#     type = string
-#     port = number
-#   }))
-# }
-
-
-# 172.21.12.1/22
-# 172.21.12.10-172.21.15.199
-# 172.21.12.200-172.21.12.253
-# jsonencode(""vmware" in "/tags/platform""")
