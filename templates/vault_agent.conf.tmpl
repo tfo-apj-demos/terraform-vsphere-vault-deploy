@@ -23,6 +23,11 @@ template {
 EOH
   destination = "/opt/vault/tls/tls.key"
   exec = {
-    command = ["/bin/systemctl", "restart", "vault.service"]
+    command = [
+      "sudo",
+      "/bin/systemctl", 
+      "restart", 
+      "vault.service"
+    ]
   }
 }
