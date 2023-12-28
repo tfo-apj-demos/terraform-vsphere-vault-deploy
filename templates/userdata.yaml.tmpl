@@ -57,7 +57,7 @@ write_files:
     ExecStart=
     ExecStart=/usr/bin/vault server -config=/etc/vault.d/server.hcl
     [Unit]
-    ConditionFileNotEmpty=/opt/vault/tls/certs
+    ConditionFileNotEmpty=/opt/vault/tls/tls.key
     After=vault-agent.service
 
   owner: vault:vault
