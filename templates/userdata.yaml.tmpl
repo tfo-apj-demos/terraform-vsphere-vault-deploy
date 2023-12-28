@@ -116,6 +116,7 @@ runcmd:
 - sudo apt install jq -y
 - |
     export VAULT_UNSEALED=$(VAULT_ADDR="https://${ip_address}:8200" vault operator init -status -format=json | jq .Initialized)
-    if [ $VAULT_UNSEALED = false ]; then 
+    if [ $VAULT_UNSEALED = false ]
+    then 
       $(VAULT_ADDR="https://${ip_address}:8200" vault operator init -format=json | sudo tee /etc/vault.d/init.json); 
     fi
