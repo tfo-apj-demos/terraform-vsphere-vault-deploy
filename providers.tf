@@ -40,5 +40,5 @@ provider "dns" {
       username = var.dns_username
       password = var.dns_password
     }
-  }       
+  }
 }
