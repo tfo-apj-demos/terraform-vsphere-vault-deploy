@@ -17,12 +17,6 @@ terraform {
       version = "~> 3.3"
     }
   }
-  cloud {
-    organization = "tfo-apj-demos"
-    workspaces {
-      name = "vsphere-vault"
-    }
-  }
 }
 
 provider "boundary" {
