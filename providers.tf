@@ -25,8 +25,6 @@ terraform {
   }
 }
 
-provider "nsxt" {}
-
 provider "boundary" {
   addr  = var.boundary_addr
   token = var.boundary_token
