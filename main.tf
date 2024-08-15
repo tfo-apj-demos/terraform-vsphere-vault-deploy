@@ -110,6 +110,7 @@ module "boundary_target" {
   host_catalog_id = "hcst_RACKlVym4Z"
   hostname_prefix = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
+  vault_address = "https://vault.hashicorp.local:8200"
 }
 
 # --- Add Vault nodes and LB to DNS
