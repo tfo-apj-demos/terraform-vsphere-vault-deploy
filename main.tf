@@ -1,9 +1,9 @@
 # --- Get latest Vault image value from HCP Packer
-data "hcp_packer_image" "this" {
-  bucket_name    = "vault-ubuntu-2204"
-  channel        = "latest"
-  cloud_provider = "vsphere"
-  region         = "Datacenter"
+data "hcp_packer_artifact" "this" {
+  bucket_name  = "vault-ubuntu-2204"
+  channel_name = "latest"
+  platform     = "vsphere"
+  region       = "Datacenter"
 }
 
 # --- Retrieve IPs for use by the load balancer and Vault virtual machines
@@ -37,13 +37,13 @@ module "load_balancer" {
   source  = "app.terraform.io/tfo-apj-demos/load-balancer/nsxt"
   version = "0.0.1"
 
-  hosts = [ for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address): { "hostname" = hostname, "address" = address } ]
+  hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   ports = [
     "8200"
   ]
   load_balancer_ip_address = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
-  name = "vault"
-  lb_app_profile_type = "TCP"
+  name                     = "vault"
+  lb_app_profile_type      = "TCP"
 }
 
 # --- Deploy a cluster of Vault nodes
@@ -69,7 +69,7 @@ module "vault_blue" {
   dns_suffix_list = ["hashicorp.local"]
 
 
-  template = data.hcp_packer_image.this.cloud_image_id
+  template = data.hcp_packer_artifact.this.external_identifier
   tags = {
     "application" = "vault-server"
   }
@@ -83,10 +83,10 @@ module "vault_blue" {
     vault_vsphere_user     = var.vault_vsphere_user
     vault_vsphere_password = var.vault_vsphere_password
     vault_agent_config = base64encode(templatefile("${path.module}/templates/vault_agent.conf.tmpl", {
-      hostname      = "vault-blue-${count.index + 1}"
-      vault_address = var.vault_address
-      private_ip = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
-      load_balancer_ip = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
+      hostname               = "vault-blue-${count.index + 1}"
+      vault_address          = var.vault_address
+      private_ip             = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
+      load_balancer_ip       = nsxt_policy_ip_address_allocation.load_balancer.allocation_ip
       load_balancer_dns_name = var.load_balancer_dns_name
     }))
     ip_address = nsxt_policy_ip_address_allocation.this[count.index].allocation_ip
@@ -98,19 +98,19 @@ module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "~> 0.0"
 
-  hosts = [ for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address): { "hostname" = hostname, "address" = address } ]
+  hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   services = [
-    { 
+    {
       name = "ssh",
       type = "ssh",
       port = "22"
     }
   ]
-  project_name = "gcve_admins"
-  host_catalog_id = "hcst_RACKlVym4Z"
-  hostname_prefix = "vault_blue"
+  project_name                    = "gcve_admins"
+  host_catalog_id                 = "hcst_RACKlVym4Z"
+  hostname_prefix                 = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
-  vault_address = "https://vault.hashicorp.local:8200"
+  vault_address                   = "https://vault.hashicorp.local:8200"
 }
 
 # --- Add Vault nodes and LB to DNS
@@ -123,7 +123,7 @@ module "domain-name-system-management" {
       name      = var.load_balancer_dns_name
       addresses = [nsxt_policy_ip_address_allocation.load_balancer.allocation_ip]
     }],
-    [for i in range(var.vault_cluster_size): {
+    [for i in range(var.vault_cluster_size) : {
       name      = module.vault_blue[i].virtual_machine_name
       addresses = [module.vault_blue[i].ip_address]
     }]
