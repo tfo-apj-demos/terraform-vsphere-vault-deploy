@@ -34,3 +34,9 @@ provider "dns" {
     }
   }
 }
+
+provider "nsxt" {
+  host     = var.nsxt_host
+  username = var.nsxt_username
+  password = var.nsxt_password
+}
