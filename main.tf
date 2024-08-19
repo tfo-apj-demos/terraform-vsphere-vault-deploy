@@ -106,7 +106,8 @@ module "boundary_target" {
       port = "22"
     }
   ]
-  project_name                    = "shared_services"
+  boundary_credential_store_vault_name = "HCP Vault"
+  project_name                    = "shared_services" 
   host_catalog_id                 = "hcst_RACKlVym4Z"
   hostname_prefix                 = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
