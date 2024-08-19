@@ -40,3 +40,6 @@ provider "nsxt" {
   username = var.nsxt_username
   password = var.nsxt_password
 }
+
+provider "vsphere" {
+}
