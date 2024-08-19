@@ -24,7 +24,7 @@ variable "vault_address" {
   description = "The address of the upstream HCP Vault server that is used for unseal."
 }
 
-variable "vault_vsphere_user" {
+/*variable "vault_vsphere_user" {
   type = string
 }
 
@@ -34,7 +34,7 @@ variable "vault_vsphere_password" {
 
 variable "vault_vsphere_host" {
   type = string
-}
+}*/
 
 ## Boundary variables to add Vault as a target in Boundary
 variable "scope_id" {
