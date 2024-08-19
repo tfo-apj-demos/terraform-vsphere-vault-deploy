@@ -106,10 +106,9 @@ module "boundary_target" {
       port = "22"
     }
   ]
-  boundary_credential_store_vault_name = "HCP Vault"
-  project_name                    = "shared_services" 
-  host_catalog_id                 = "hcst_RACKlVym4Z"
-  hostname_prefix                 = "vault_blue"
+  project_name = "gcve_admins"
+  host_catalog_id = "hcst_RACKlVym4Z"
+  hostname_prefix = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
   vault_address                   = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
 }
