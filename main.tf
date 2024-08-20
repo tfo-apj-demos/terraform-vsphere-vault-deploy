@@ -58,6 +58,7 @@ module "vault_blue" {
   cluster           = "cluster"
   primary_datastore = "vsanDatastore"
   folder_path       = "Demo Management"
+  resource_pool     = "Demo Management"
   networks = {
     "seg-general" : "${nsxt_policy_ip_address_allocation.this[count.index].allocation_ip}/22"
   }
