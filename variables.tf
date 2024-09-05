@@ -81,13 +81,3 @@ variable "dns_server" {
 variable "load_balancer_dns_name" {
   type = string
 }
-
-variable "nsxt_host" {
-  type = string
-}
-variable "nsxt_password" {
-  type = string
-}
-variable "nsxt_username" {
-  type = string
-}
