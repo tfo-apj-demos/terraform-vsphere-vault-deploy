@@ -97,7 +97,7 @@ module "vault_blue" {
 # --- Create Boundary targets for the Vault nodes
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "~> 0.0"
+  version = "~> 1"
 
   hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   services = [
@@ -107,11 +107,11 @@ module "boundary_target" {
       port = "22"
     }
   ]
-  project_name = "gcve_admins"
+  project_name  = "gcve_admins"
   host_catalog_id = "hcst_RACKlVym4Z"
   hostname_prefix = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
-  vault_address                   = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
+  vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
 }
 
 # --- Add Vault nodes and LB to DNS
