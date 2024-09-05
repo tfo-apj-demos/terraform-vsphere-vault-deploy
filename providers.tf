@@ -36,9 +36,7 @@ provider "dns" {
 }
 
 provider "nsxt" {
-  host     = var.nsxt_host
-  username = var.nsxt_username
-  password = var.nsxt_password
+  max_retries          = 3
 }
 
 provider "vsphere" {
