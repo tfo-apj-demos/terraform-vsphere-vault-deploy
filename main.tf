@@ -95,7 +95,7 @@ module "vault_blue" {
 }
 
 # --- Create Boundary targets for the Vault nodes
-/*module "boundary_target" {
+module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "~> 0.0"
 
@@ -112,7 +112,7 @@ module "vault_blue" {
   hostname_prefix = "vault_blue"
   injected_credential_library_ids = ["clvsclt_bDETPnhh75"]
   vault_address                   = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
-}*/
+}
 
 # --- Add Vault nodes and LB to DNS
 module "domain-name-system-management" {
