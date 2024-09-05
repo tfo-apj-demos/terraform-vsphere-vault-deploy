@@ -97,7 +97,7 @@ module "vault_blue" {
 # --- Create Boundary targets for the Vault nodes
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "~> 1"
+  version = "1.0.13-alpha"
 
   hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   services = [
