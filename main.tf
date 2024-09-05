@@ -49,7 +49,7 @@ module "load_balancer" {
 # --- Deploy a cluster of Vault nodes
 module "vault_blue" {
   source  = "app.terraform.io/tfo-apj-demos/virtual-machine/vsphere"
-  version = "~> 1.3"
+  version = "~> 1.4"
 
   count = var.vault_cluster_size
 
