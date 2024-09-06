@@ -123,11 +123,12 @@ module "boundary_target" {
   existing_ssh_credential_library_ids = {
     "ssh" = "clvsclt_bDETPnhh75"
   }
-
   project_name  = "gcve_admins"
   hostname_prefix = "vault_blue"
-  #credential_store_token = module.ssh_role.token
-  #boundary_credential_store_vault_name = "HCP Vault"
+
+  # Commented out since we are using existing store and libraries
+  # credential_store_token = module.ssh_role.token
+  # boundary_credential_store_vault_name = "HCP Vault"
   vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
 }
 
