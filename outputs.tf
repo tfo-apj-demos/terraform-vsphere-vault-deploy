@@ -9,3 +9,11 @@ output "existing_ssh_credential_library_ids_output" {
 output "service_keys_output" {
   value = module.boundary_target.service_keys
 }
+
+output "host_catalog_id" {
+  value = module.boundary_target.host_catalog_id
+}
+
+output "host_ids" {
+  value = module.boundary_target.host_ids
+}
