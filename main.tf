@@ -121,7 +121,7 @@ module "boundary_target" {
   existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
   existing_vault_credential_library_ids = {}
   existing_ssh_credential_library_ids = {
-    "ssh" = "clvsclt_bDETPnhh75"
+    "boundary" = "clvsclt_bDETPnhh75"
   }
   project_name  = "gcve_admins"
   hostname_prefix = "vault_blue"
