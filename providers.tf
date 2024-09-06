@@ -16,6 +16,10 @@ terraform {
       source  = "hashicorp/dns"
       version = "~> 3.3"
     }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 4"
+    }
   }
 }
 
@@ -40,4 +44,8 @@ provider "nsxt" {
 }
 
 provider "vsphere" {
+}
+
+provider "vault" {
+  address = var.vault_address
 }
