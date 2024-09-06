@@ -98,11 +98,11 @@ module "vault_blue" {
 
 # --- Create Boundary targets for the Vault nodes
 
-module "ssh_role" {
+/*module "ssh_role" {
   source = "github.com/tfo-apj-demos/terraform-vault-ssh-role?ref=1.0.0"
 
   ssh_role_name = "vault-blue-access"
-}
+}*/
 
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
@@ -118,10 +118,16 @@ module "boundary_target" {
     }
   ]
 
+  existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
+  existing_vault_credential_library_ids = {}
+  existing_ssh_credential_library_ids = {
+    "ssh" = "clvsclt_bDETPnhh75"
+  }
+
   project_name  = "gcve_admins"
   hostname_prefix = "vault_blue"
-  credential_store_token = module.ssh_role.token
-  boundary_credential_store_vault_name = "HCP Vault"
+  #credential_store_token = module.ssh_role.token
+  #boundary_credential_store_vault_name = "HCP Vault"
   vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
 }
 
