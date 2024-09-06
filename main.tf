@@ -114,7 +114,7 @@ module "boundary_target" {
       name = "ssh",
       type = "ssh",
       port = "22",
-      credential_paths = [module.ssh_role.credential_path]
+      credential_paths = ["ssh/sign/boundary"]
     }
   ]
 
