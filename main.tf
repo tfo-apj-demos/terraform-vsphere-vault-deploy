@@ -108,7 +108,7 @@ module "vault_blue" {
 
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "~> 1"
+  version = "~> 1.1"
 
   hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   services = [
