@@ -106,7 +106,7 @@ module "vault_blue" {
   ssh_role_name = "vault-blue-access"
 }*/
 
-/*module "boundary_target" {
+module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "~> 1"
 
@@ -132,7 +132,7 @@ module "vault_blue" {
   # credential_store_token = module.ssh_role.token
   # boundary_credential_store_vault_name = "HCP Vault"
   vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
-}*/
+}
 
 # --- Add Vault nodes and LB to DNS
 module "domain-name-system-management" {
