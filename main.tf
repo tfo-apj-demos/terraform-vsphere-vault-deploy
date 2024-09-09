@@ -54,6 +54,8 @@ module "vault_blue" {
   count = var.vault_cluster_size
 
   hostname          = "vault-blue-${count.index + 1}"
+  num_cpus          = 4
+  memory            = 8192
   datacenter        = "Datacenter"
   cluster           = "cluster"
   primary_datastore = "vsanDatastore"
