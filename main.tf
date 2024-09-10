@@ -110,6 +110,15 @@ module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "~> 1.1"
 
+  project_name  = "gcve_admins" 
+  hostname_prefix = "GCVE Vault Cluster VMs"
+  vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
+  
+  existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
+  existing_ssh_credential_library_ids = {
+    "boundary" = "clvsclt_bDETPnhh75"
+  }
+
   hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
   services = [
     {
@@ -119,15 +128,6 @@ module "boundary_target" {
       credential_paths = ["ssh/sign/boundary"]
     }
   ]
-
-  existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
-  existing_vault_credential_library_ids = {}
-  existing_ssh_credential_library_ids = {
-    "boundary" = "clvsclt_bDETPnhh75"
-  }
-  project_name  = "gcve_admins"
-  hostname_prefix = "GCVE Vault Cluster"
-  vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
 }
 
 # --- Add Vault nodes and LB to DNS
