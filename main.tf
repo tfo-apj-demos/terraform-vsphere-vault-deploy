@@ -108,10 +108,10 @@ module "vault_blue" {
 
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "~> 1.4"
+  version = "1.5.6"
 
   project_name  = "gcve_admins" 
-  hostname_prefix = "GCVE Vault Cluster VMs"
+  hostname_prefix = "GCVE Vault Cluster Virtual Machines"
   vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200/"
   
   existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
