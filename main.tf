@@ -108,7 +108,7 @@ module "vault_blue" {
 
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "1.5.6"
+  version = "1.5.7"
 
   project_name  = "gcve_admins" 
   hostname_prefix = "GCVE Vault Cluster Virtual Machines"
