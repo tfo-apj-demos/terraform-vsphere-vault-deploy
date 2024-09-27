@@ -142,9 +142,9 @@ module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
   version = "2.0.3"
 
-  project_name           = "gcve_admins"
-  hostname_prefix        = "GCVE Vault Cluster Virtual Machinest"
-  vault_address          = var.vault_address
+  project_name    = "gcve_admins"
+  hostname_prefix = "GCVE Vault Cluster Virtual Machinest"
+  vault_address   = var.vault_address
 
   # Provide the fqdn and ensure the fqdn is unique and used for mapping
   hosts = [for host in module.vault_blue : {
@@ -152,15 +152,16 @@ module "boundary_target" {
   }]
 
   services = [{
-      type               = "ssh"
-      port               = 22
-      use_existing_creds = true
-      use_vault_creds    = false
-    }]
-  
+    type               = "ssh"
+    port               = 22
+    use_existing_creds = true
+    use_vault_creds    = false
+  }]
+
   existing_infrastructure = {
     vault_credential_store_id = "csvlt_Ve8cQB79sB",
-    ssh_credential_libraries  = { 
+    ssh_credential_libraries = {
       for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
     }
+  }
 }

@@ -40,7 +40,7 @@ provider "dns" {
 }
 
 provider "nsxt" {
-  max_retries          = 3
+  max_retries = 3
 }
 
 provider "vsphere" {
