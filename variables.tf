@@ -16,7 +16,7 @@ variable "vault_license" {
 
 variable "vault_cluster_size" {
   type    = number
-  default = 5
+  default = 3
 }
 
 variable "vault_address" {
