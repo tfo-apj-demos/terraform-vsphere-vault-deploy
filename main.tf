@@ -140,10 +140,10 @@ module "domain-name-system-management" {
 # --- Create Boundary targets for the GCVE Vault cluster
 module "boundary_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "2.0.3"
+  version = "~> 2.0"
 
   project_name    = "gcve_admins"
-  hostname_prefix = "GCVE Vault Cluster Virtual Machinest"
+  hostname_prefix = "GCVE Vault Cluster Virtual Machines"
   vault_address   = var.vault_address
 
   # Provide the fqdn and ensure the fqdn is unique and used for mapping
