@@ -18,3 +18,7 @@ output "host_catalog_id" {
 output "host_ids" {
   value = module.boundary_target.host_ids
 }*/
+
+output "ssh_credential_source_ids_debug" {
+  value = module.boundary_target.ssh_credential_source_ids_debug
+}
