@@ -139,7 +139,10 @@ module "domain-name-system-management" {
 
 # --- Create Boundary targets for the GCVE Vault cluster
 module "boundary_target" {
-  source  = "app.terraform.io/tfo-apj-demos/target/boundary"
+  #source  = "app.terraform.io/tfo-apj-demos/target/boundary"
+  #make the source to this direct repo https://github.com/tfo-apj-demos/terraform-boundary-target
+  source = "github.com/tfo-apj-demos/terraform-boundary-target"
+  
   version = "~> 2.0"
 
   project_name    = "gcve_admins"
@@ -165,3 +168,4 @@ module "boundary_target" {
     }
   }
 }
+
