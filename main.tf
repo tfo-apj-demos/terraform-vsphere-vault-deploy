@@ -143,7 +143,7 @@ module "boundary_target" {
   #make the source to this direct repo https://github.com/tfo-apj-demos/terraform-boundary-target
   source = "github.com/tfo-apj-demos/terraform-boundary-target"
   
-  version = "~> 2.0"
+ #version = "~> 2.0"
 
   project_name    = "gcve_admins"
   hostname_prefix = "GCVE Vault Cluster Virtual Machines"
