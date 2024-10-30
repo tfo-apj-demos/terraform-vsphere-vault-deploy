@@ -137,35 +137,57 @@ module "domain-name-system-management" {
   ]
 }*/
 
-# --- Create Boundary targets for the GCVE Vault cluster
-module "boundary_target" {
-  #source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  #make the source to this direct repo https://github.com/tfo-apj-demos/terraform-boundary-target
-  source = "github.com/tfo-apj-demos/terraform-boundary-target"
+# # --- Create Boundary targets for the GCVE Vault cluster
+# module "boundary_target" {
+#   #source  = "app.terraform.io/tfo-apj-demos/target/boundary"
+#   #make the source to this direct repo https://github.com/tfo-apj-demos/terraform-boundary-target
+#   source = "github.com/tfo-apj-demos/terraform-boundary-target"
   
- #version = "~> 2.0"
+#  #version = "~> 2.0"
 
-  project_name    = "gcve_admins"
-  hostname_prefix = "GCVE Vault Cluster Virtual Machines"
-  vault_address   = var.vault_address
+#   project_name    = "gcve_admins"
+#   hostname_prefix = "GCVE Vault Cluster Virtual Machines"
+#   vault_address   = var.vault_address
 
-  # Provide the fqdn and ensure the fqdn is unique and used for mapping
-  hosts = [for host in module.vault_blue : {
-    fqdn = "${host.virtual_machine_name}.hashicorp.local"
-  }]
+#   # Provide the fqdn and ensure the fqdn is unique and used for mapping
+#   hosts = [for host in module.vault_blue : {
+#     fqdn = "${host.virtual_machine_name}.hashicorp.local"
+#   }]
 
-  services = [{
-    type               = "ssh"
-    port               = 22
-    use_existing_creds = true
-    use_vault_creds    = false
-  }]
+#   services = [{
+#     type               = "ssh"
+#     port               = 22
+#     use_existing_creds = true
+#     use_vault_creds    = false
+#   }]
 
-  existing_infrastructure = {
-    vault_credential_store_id = "csvlt_Ve8cQB79sB",
-    ssh_credential_libraries = {
-      for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
-    }
+#   existing_infrastructure = {
+#     vault_credential_store_id = "csvlt_Ve8cQB79sB",
+#     ssh_credential_libraries = {
+#       for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
+#     }
+#   }
+# }
+
+module "vault_blue_target" {
+  source                     = "github.com/tfo-apj-demos/terraform-boundary-target-refactored"
+
+  project_name               = "gcve_admins"
+  target_name                = "GCVE Vault Cluster Access"
+  hosts                      = [for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local"]
+  port                       = 22
+  target_type                = "ssh"
+
+  # Since credentials are provided externally
+  use_credentials            = false
+  target_mode                = "group"
+
+  # Reference the existing Vault credential store and SSH credential libraries
+  existing_credential_store_id = "csvlt_Ve8cQB79sB"
+  existing_ssh_credential_libraries = {
+    for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
   }
-}
 
+  # Alias for accessing the GCVE Vault cluster
+  alias_name                 = "vault.hashicorp.local"
+}
