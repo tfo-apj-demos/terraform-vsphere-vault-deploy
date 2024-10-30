@@ -187,7 +187,4 @@ module "vault_blue_target" {
   existing_ssh_credential_libraries = {
     for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
   }
-
-  # Alias for accessing the GCVE Vault cluster
-  alias_name                 = "vault.hashicorp.local"
 }
