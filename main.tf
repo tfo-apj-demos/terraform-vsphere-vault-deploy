@@ -170,7 +170,8 @@ module "domain-name-system-management" {
 # }
 
 module "vault_blue_target" {
-  source                     = "github.com/tfo-apj-demos/terraform-boundary-target-refactored"
+  source  = "app.terraform.io/tfo-apj-demos/target/boundary"
+  version = "3.0.0"
 
   project_name               = "gcve_admins"
   target_name                = "GCVE Vault Cluster Access"
