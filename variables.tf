@@ -1,11 +1,19 @@
 ## Provider details
 # It's easier using TF vars for the Boundary provider.
 
-variable "boundary_addr" {
+variable "boundary_address" {
   type = string
 }
 
-variable "boundary_token" {
+variable "service_account_authmethod_id" {
+  type = string
+}
+
+variable "service_account_name" {
+  type = string
+}
+
+variable "service_account_password" {
   type = string
 }
 
