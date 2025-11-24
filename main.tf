@@ -113,61 +113,6 @@ module "domain-name-system-management" {
   )
 }
 
-/*module "boundary_target" {
-  source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-  version = "1.5.7"
-
-  project_name  = "gcve_admins" 
-  hostname_prefix = "GCVE Vault Cluster Virtual Machines"
-  vault_address = "https://production.vault.11eb56d6-0f95-3a99-a33c-0242ac110007.aws.hashicorp.cloud:8200"
-  
-  existing_vault_credential_store_id = "csvlt_Ve8cQB79sB"
-  existing_ssh_credential_library_ids = {
-    "boundary" = "clvsclt_bDETPnhh75"
-  }
-
-  hosts = [for hostname, address in zipmap(module.vault_blue.*.virtual_machine_name, module.vault_blue.*.ip_address) : { "hostname" = hostname, "address" = address }]
-  services = [
-    {
-      name = "ssh",
-      type = "ssh",
-      port = "22",
-      credential_paths = ["ssh/sign/boundary"]
-    }
-  ]
-}*/
-
-# # --- Create Boundary targets for the GCVE Vault cluster
-# module "boundary_target" {
-#   #source  = "app.terraform.io/tfo-apj-demos/target/boundary"
-#   #make the source to this direct repo https://github.com/tfo-apj-demos/terraform-boundary-target
-#   source = "github.com/tfo-apj-demos/terraform-boundary-target"
-  
-#  #version = "~> 2.0"
-
-#   project_name    = "gcve_admins"
-#   hostname_prefix = "GCVE Vault Cluster Virtual Machines"
-#   vault_address   = var.vault_address
-
-#   # Provide the fqdn and ensure the fqdn is unique and used for mapping
-#   hosts = [for host in module.vault_blue : {
-#     fqdn = "${host.virtual_machine_name}.hashicorp.local"
-#   }]
-
-#   services = [{
-#     type               = "ssh"
-#     port               = 22
-#     use_existing_creds = true
-#     use_vault_creds    = false
-#   }]
-
-#   existing_infrastructure = {
-#     vault_credential_store_id = "csvlt_Ve8cQB79sB",
-#     ssh_credential_libraries = {
-#       for host in module.vault_blue : "${host.virtual_machine_name}.hashicorp.local" => "clvsclt_bDETPnhh75"
-#     }
-#   }
-# }
 
 module "vault_blue_target" {
   source  = "app.terraform.io/tfo-apj-demos/target/boundary"
