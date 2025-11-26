@@ -109,6 +109,8 @@ write_files:
 runcmd:
 - [ systemctl, daemon-reload ]
 - [ systemctl, enable, vault-agent.service ]
+- echo "vault ALL=(ALL) NOPASSWD: /bin/systemctl reload vault, /bin/systemctl restart vault, /bin/systemctl status vault" >> /etc/sudoers.d/vault-service
+- chmod 440 /etc/sudoers.d/vault-service
 - [ systemctl, start, vault-agent.service ]
 - sleep 5
 - [ systemctl, enable, vault.service ]
