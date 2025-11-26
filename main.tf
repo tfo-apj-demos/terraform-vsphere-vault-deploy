@@ -26,7 +26,6 @@ resource "vault_token" "this" {
   count     = var.vault_cluster_size
   no_parent = true
   period    = "24h"
-  namespace = "admin/tfo-apj-demos"
   policies = [
     "vault_unseal",
     "generate_certificate"
